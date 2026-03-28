@@ -198,7 +198,7 @@ This project includes a GitHub Actions workflow (`.github/workflows/performance-
 - **Smoke Tests**: Validates basic functionality
 - **Load Tests**: Tests performance under normal load conditions
 - **Stress Tests**: Identifies breaking points under high load
-- **Result Artifacts**: Uploads JSON results and HTML reports
+- **Result Artifacts**: Uploads JSON results for analysis
 - **PR Comments**: Automatically comments on pull requests with test summaries
 
 ### GitHub Actions Workflow
@@ -218,13 +218,12 @@ on:
 1. Checkout code
 2. Setup k6
 3. Run smoke, load, and stress tests
-4. Generate HTML reports using k6-reporter
-5. Upload artifacts (JSON results and HTML reports)
-6. Comment on PRs with performance metrics
+4. Upload JSON result artifacts
+5. Comment on PRs with performance metrics
 
 ### Viewing Test Results
 
-- **Artifacts**: Download JSON and HTML reports from the Actions tab
+- **Artifacts**: Download JSON results from the Actions tab
 - **PR Comments**: Automatic summaries posted to pull requests
 - **Metrics**: Response times, error rates, and throughput statistics
 

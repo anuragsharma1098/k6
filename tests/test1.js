@@ -31,7 +31,7 @@ export function loadTest() {
 }
 
 export function stressTest() {
-  const url = buildUrl(endpoint, configOverrides.endpoints.todos);
+  const url = buildUrl(endpoint, configOverrides.endpoints.ping);
   const res = http.get(url, { headers: buildHeaders() });
 
   check(res, { 'stress status is 200': (r) => r.status === 200 });

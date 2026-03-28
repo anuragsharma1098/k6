@@ -40,23 +40,6 @@ jobs:
         path: results/
         retention-days: 30
 
-    - name: Generate HTML report
-      if: always()
-      run: |
-        # Install k6-reporter for HTML reports
-        npm install -g k6-reporter
-        k6-reporter -f results/smoke_test_results.json -o results/smoke_report.html
-        k6-reporter -f results/load_test_results.json -o results/load_report.html
-        k6-reporter -f results/stress_test_results.json -o results/stress_report.html
-
-    - name: Upload HTML reports
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: k6-html-reports
-        path: results/*.html
-        retention-days: 30
-
     - name: Comment PR with test results
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v7

@@ -47,13 +47,12 @@ k6/
 ## Installation
 
 1. Clone the repository:
-
    ```bash
    git clone https://github.com/anuragsharma1098/k6.git
    cd k6
    ```
-2. Install k6 if not already installed:
 
+2. Install k6 if not already installed:
    ```bash
    # On macOS with Homebrew
    brew install k6
@@ -105,41 +104,31 @@ user2,user2password,user2@example.com
 ## Running Tests
 
 ### Smoke Test
-
 Quick validation test to ensure basic functionality:
-
 ```bash
 k6 run tests/smoke/smoke_test.js
 ```
 
 ### Load Test
-
 Gradual load increase to test performance under normal conditions:
-
 ```bash
 k6 run tests/load/load_test.js
 ```
 
 ### Stress Test
-
 High-load test to find breaking points:
-
 ```bash
 k6 run tests/stress/stress_test.js
 ```
 
 ### Full Scenario Suite
-
 Run all scenarios defined in the configuration:
-
 ```bash
 k6 run tests/test1.js
 ```
 
 ### Custom Options
-
 Override default settings:
-
 ```bash
 # Run with custom VUs and duration
 k6 run --vus 10 --duration 30s tests/smoke/smoke_test.js
@@ -155,20 +144,17 @@ k6 run --out json=results/test_results.json tests/test1.js
 ## Test Scenarios
 
 ### Smoke Scenario
-
 - **Executor**: `constant-vus`
 - **VUs**: 5
 - **Duration**: 30 seconds
 - **Purpose**: Basic functionality validation
 
 ### Load Scenario
-
 - **Executor**: `ramping-vus`
 - **Stages**: Ramp up to 50 VUs over 4 minutes, then ramp down
 - **Purpose**: Performance testing under normal load
 
 ### Stress Scenario
-
 - **Executor**: `per-vu-iterations`
 - **VUs**: 50
 - **Iterations**: 20 per VU
@@ -184,26 +170,22 @@ The framework includes custom metrics:
 - **Error Counter**: Counts failed requests
 
 Thresholds are defined in scenarios:
-
 - HTTP request duration: p(95) < 500ms, p(99) < 1000ms
 - Error rate: < 1%
 
 ## Extending the Framework
 
 ### Adding New Tests
-
 1. Create a new test file in `tests/`
 2. Import required utilities from `lib/`
 3. Define test logic using k6 APIs
 4. Add to scenarios in `scenarios/http_scenarios.js` if needed
 
 ### Adding New Endpoints
-
 1. Update `data/config.json` with new endpoint paths
 2. Use `buildUrl()` utility in test code
 
 ### Custom Metrics
-
 1. Define new metrics in `lib/metrics.js`
 2. Record them in test functions
 
@@ -227,13 +209,12 @@ The workflow file (`.github/workflows/performance-tests.yml`) includes:
 name: Performance Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, day_1 ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, day_1 ]
 ```
 
 **Steps:**
-
 1. Checkout code
 2. Setup k6
 3. Run smoke, load, and stress tests
@@ -275,7 +256,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Support
 
 For questions or issues:
-
 - Check the [k6 documentation](https://k6.io/docs/)
 - Open an issue in this repository
 - Join the [k6 community](https://community.k6.io/)

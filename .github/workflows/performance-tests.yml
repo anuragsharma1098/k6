@@ -24,16 +24,13 @@ jobs:
         sudo apt install -y k6
 
     - name: Run smoke tests
-      run: k6 run --out html=results/smoke_test_results.html tests/smoke/smoke_test.js
-      continue-on-error: true
+      run: k6 run --out json=results/smoke_test_results.json tests/smoke/smoke_test.js
 
-    # - name: Run load tests
-    #   run: k6 run --out html=results/load_test_results.html tests/load/load_test.js
-    #   continue-on-error: true
+    - name: Run load tests
+      run: k6 run --out json=results/load_test_results.json tests/load/load_test.js
 
-    # - name: Run stress tests
-    #   run: k6 run --out html=results/stress_test_results.html tests/stress/stress_test.js
-    #   continue-on-error: true
+    - name: Run stress tests
+      run: k6 run --out json=results/stress_test_results.json tests/stress/stress_test.js
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
@@ -42,33 +39,3 @@ jobs:
         name: k6-test-results
         path: results/
         retention-days: 30
-
-    - name: Comment PR with HTML report
-      if: github.event_name == 'pull_request' && always()
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-          const path = require('path');
-
-          const resultsDir = 'results';
-          const htmlFiles = fs.readdirSync(resultsDir).filter(f => f.endsWith('.html')).sort();
-
-          let comment = '## Performance Test Report\n\n';
-          
-          if (htmlFiles.length === 0) {
-            comment += 'No HTML reports generated.';
-          } else {
-            comment += 'Test reports have been generated. Click below to download:\n\n';
-            htmlFiles.forEach(file => {
-              const testName = file.replace('_test_results.html', '').replace(/_/g, ' ').toUpperCase();
-              comment += `- **${testName}**: [${file}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
-            });
-          }
-
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: comment
-          });

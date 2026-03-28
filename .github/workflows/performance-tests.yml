@@ -1,0 +1,96 @@
+name: Performance Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  performance-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup k6
+      run: |
+        sudo apt update
+        sudo apt install -y wget
+        wget -q -O - https://dl.k6.io/key.gpg | sudo apt-key add -
+        echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+        sudo apt update
+        sudo apt install -y k6
+
+    - name: Run smoke tests
+      run: k6 run --out json=results/smoke_test_results.json tests/smoke/smoke_test.js
+
+    - name: Run load tests
+      run: k6 run --out json=results/load_test_results.json tests/load/load_test.js
+
+    - name: Run stress tests
+      run: k6 run --out json=results/stress_test_results.json tests/stress/stress_test.js
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: k6-test-results
+        path: results/
+        retention-days: 30
+
+    - name: Generate HTML report
+      if: always()
+      run: |
+        # Install k6-reporter for HTML reports
+        npm install -g k6-reporter
+        k6-reporter -f results/smoke_test_results.json -o results/smoke_report.html
+        k6-reporter -f results/load_test_results.json -o results/load_report.html
+        k6-reporter -f results/stress_test_results.json -o results/stress_report.html
+
+    - name: Upload HTML reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: k6-html-reports
+        path: results/*.html
+        retention-days: 30
+
+    - name: Comment PR with test results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+
+          // Read test results
+          const resultsDir = 'results';
+          const files = fs.readdirSync(resultsDir).filter(file => file.endsWith('.json'));
+
+          let comment = '## 🚀 Performance Test Results\n\n';
+
+          files.forEach(file => {
+            const filePath = path.join(resultsDir, file);
+            const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+            const testName = file.replace('_test_results.json', '').replace('_', ' ').toUpperCase();
+            const metrics = data.metrics;
+
+            comment += `### ${testName} Test\n`;
+            comment += `- **Duration**: ${data.metrics.iteration_duration.values.avg}ms avg\n`;
+            comment += `- **Requests**: ${data.metrics.http_reqs.values.count}\n`;
+            comment += `- **Failed Requests**: ${data.metrics.http_req_failed.values.rate * 100}%\n`;
+            comment += `- **Response Time (95th)**: ${data.metrics.http_req_duration.values['p(95)']}ms\n`;
+            comment += `- **Response Time (99th)**: ${data.metrics.http_req_duration.values['p(99)']}ms\n\n`;
+          });
+
+          comment += '📊 [View detailed reports](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})';
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });

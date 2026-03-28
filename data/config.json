@@ -1,0 +1,10 @@
+{
+  "baseUrl": "https://test.k6.io",
+  "endpoints": {
+    "login": "/auth/login",
+    "todos": "/public/crocodiles/",
+    "ping": "/"  
+  },
+  "defaultToken": "",
+  "logLevel": "info"
+}

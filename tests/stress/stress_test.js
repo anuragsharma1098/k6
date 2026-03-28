@@ -1,13 +1,17 @@
-import http from "k6/http";
+import { stressTest } from '../test1.js';
 
 export const options = {
   stages: [
-    { duration: "30s", target: 100 }, // Ramp up to 100 users over 30 seconds
-    { duration: "1m", target: 100 }, // Stay at 100 users for 1 minute
-    { duration: "30s", target: 0 }, // Ramp down to 0 users over 30 seconds
+    { duration: '30s', target: 100 },
+    { duration: '1m', target: 100 },
+    { duration: '30s', target: 0 },
   ],
+  thresholds: {
+    'http_req_duration': ['p(95)<700'],
+    'error_count': ['rate<0.05'],
+  },
 };
 
 export default function () {
-  http.get("https://test.k6.io");
+  stressTest();
 }

@@ -69,7 +69,8 @@ jobs:
             comment += `- **Response Time (99th)**: ${data.metrics.http_req_duration.values['p(99)']}ms\n\n`;
           });
 
-          comment += '📊 [View detailed reports](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})';
+          const repositoryUrl = context.payload.pull_request.head.repo.html_url;
+          comment += `📊 [View detailed reports](${repositoryUrl}/actions/runs/${context.runId})`;
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,

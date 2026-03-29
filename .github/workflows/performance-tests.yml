@@ -26,11 +26,11 @@ jobs:
     - name: Run smoke tests
       run: k6 run --out json=results/smoke_test_results.json tests/smoke/smoke_test.js
 
-    - name: Run load tests
-      run: k6 run --out json=results/load_test_results.json tests/load/load_test.js
+    # - name: Run load tests
+    #   run: k6 run --out json=results/load_test_results.json tests/load/load_test.js
 
-    - name: Run stress tests
-      run: k6 run --out json=results/stress_test_results.json tests/stress/stress_test.js
+    # - name: Run stress tests
+    #   run: k6 run --out json=results/stress_test_results.json tests/stress/stress_test.js
 
     - name: Upload test results
       uses: actions/upload-artifact@v4

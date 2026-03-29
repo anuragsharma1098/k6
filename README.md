@@ -217,7 +217,6 @@ This project includes a GitHub Actions workflow (`.github/workflows/performance-
 - **Load Tests**: Tests performance under normal load conditions
 - **Stress Tests**: Identifies breaking points under high load
 - **Result Artifacts**: Uploads JSON results for analysis
-- **PR Comments**: Automatically comments on pull requests with test summaries
 
 ### GitHub Actions Workflow
 

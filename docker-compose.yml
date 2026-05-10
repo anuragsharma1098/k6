@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    working_dir: /scripts
+    volumes:
+      - ./:/scripts:cached
+    entrypoint: ["k6"]
+    command: ["run", "tests/test1.js"]

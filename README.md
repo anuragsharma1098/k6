@@ -64,6 +64,32 @@ k6/
    # Or download from https://k6.io/docs/get-started/installation/
    ```
 
+## Containerized Usage
+
+### Dev Container
+
+Open this repository in VS Code and choose "Reopen in Container". The devcontainer is defined in `.devcontainer/devcontainer.json` and uses the official `grafana/k6` binary for local development.
+
+### Docker Compose
+
+Use the included `docker-compose.yml` to run k6 tests without installing k6 locally:
+
+```bash
+docker compose up --build --detach
+```
+
+Then run test commands with:
+
+```bash
+docker compose run --rm k6 run tests/smoke/smoke_test.js
+```
+
+To stop and remove the container:
+
+```bash
+docker compose down
+```
+
 ## Configuration
 
 ### Base URL Configuration

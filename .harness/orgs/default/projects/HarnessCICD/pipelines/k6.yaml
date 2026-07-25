@@ -28,8 +28,7 @@ pipeline:
             arch: Amd64
           runtime:
             type: Docker
-            spec:
-              image: grafana/k6:latest
+            spec: {}
           execution:
             steps:
               - step:

@@ -44,6 +44,7 @@ pipeline:
                   name: Run Smoke Test
                   identifier: Run_Smoke_Test
                   spec:
+                    image: grafana/k6:latest
                     shell: Sh
                     command: |
                       k6 run \

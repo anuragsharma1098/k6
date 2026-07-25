@@ -33,25 +33,39 @@ pipeline:
             steps:
               - step:
                   type: Run
+                  name: Setup k6
+                  identifier: Setup_k6
+                  spec:
+                    image: ubuntu:22.04
+                    shell: Sh
+                    command: |
+                      apt update
+                      apt install -y wget gnupg
+                      wget -q -O - https://dl.k6.io/key.gpg | apt-key add -
+                      echo "deb https://dl.k6.io/deb stable main" | tee /etc/apt/sources.list.d/k6.list
+                      apt update
+                      apt install -y k6
+              - step:
+                  type: Run
                   name: Create Results Directory
                   identifier: Create_Results_Directory
                   spec:
                     shell: Sh
                     command: |
-                      umask 000
                       mkdir -p results
               - step:
                   type: Run
                   name: Run Smoke Test
                   identifier: Run_Smoke_Test
                   spec:
-                    image: grafana/k6:latest
+                    image: ubuntu:22.04
                     shell: Sh
-                    runAsUser: "0"
                     command: |
-                      k6 run \
-                      --out json=results/smoke_test_results.json \
-                      tests/smoke/smoke_test.js
+                      apt update && apt install -y wget gnupg
+                      wget -q -O - https://dl.k6.io/key.gpg | apt-key add -
+                      echo "deb https://dl.k6.io/deb stable main" | tee /etc/apt/sources.list.d/k6.list
+                      apt update && apt install -y k6
+                      k6 run --out json=results/smoke_test_results.json tests/smoke/smoke_test.js
               - step:
                   type: Run
                   name: Verify Test Results

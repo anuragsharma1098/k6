@@ -66,6 +66,11 @@ pipeline:
                       echo "deb https://dl.k6.io/deb stable main" | tee /etc/apt/sources.list.d/k6.list
                       apt update && apt install -y k6
                       k6 run --out json=results/smoke_test_results.json tests/smoke/smoke_test.js
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - results/junit.xml
               - step:
                   type: Run
                   name: Verify Test Results

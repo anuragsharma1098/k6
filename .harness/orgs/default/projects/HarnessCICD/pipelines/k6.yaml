@@ -38,8 +38,8 @@ pipeline:
                   spec:
                     shell: Sh
                     command: |
+                      umask 000
                       mkdir -p results
-                      chmod 777 results
               - step:
                   type: Run
                   name: Run Smoke Test

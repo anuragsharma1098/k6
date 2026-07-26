@@ -1,0 +1,82 @@
+pipeline:
+  name: k6
+  identifier: k6
+  projectIdentifier: HarnessCICD
+  orgIdentifier: default
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: account.github
+        repoName: k6
+        build: <+input>
+  stages:
+    - stage:
+        name: Performance Tests
+        identifier: Performance_Tests
+        description: Run k6 performance tests
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          buildIntelligence:
+            enabled: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Docker
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Setup k6
+                  identifier: Setup_k6
+                  spec:
+                    image: ubuntu:22.04
+                    shell: Sh
+                    command: |
+                      apt update
+                      apt install -y wget gnupg
+                      wget -q -O - https://dl.k6.io/key.gpg | apt-key add -
+                      echo "deb https://dl.k6.io/deb stable main" | tee /etc/apt/sources.list.d/k6.list
+                      apt update
+                      apt install -y k6
+              - step:
+                  type: Run
+                  name: Create Results Directory
+                  identifier: Create_Results_Directory
+                  spec:
+                    shell: Sh
+                    command: |
+                      mkdir -p results
+              - step:
+                  type: Run
+                  name: Run Smoke Test
+                  identifier: Run_Smoke_Test
+                  spec:
+                    image: ubuntu:22.04
+                    shell: Sh
+                    command: |
+                      apt update && apt install -y wget gnupg
+                      wget -q -O - https://dl.k6.io/key.gpg | apt-key add -
+                      echo "deb https://dl.k6.io/deb stable main" | tee /etc/apt/sources.list.d/k6.list
+                      apt update && apt install -y k6
+                      k6 run --out json=results/smoke_test_results.json tests/smoke/smoke_test.js
+                    reports:
+                      type: JUnit
+                      spec:
+                        paths:
+                          - results/junit.xml
+              - step:
+                  type: Run
+                  name: Verify Test Results
+                  identifier: Verify_Test_Results
+                  spec:
+                    shell: Sh
+                    command: |
+                      echo "Performance Test Results:"
+                      ls -lh results/
